@@ -1,1 +1,96 @@
+//-----------------------------
+// Title: Assignment 4, Temperature Comparator
+//-----------------------------
+// Purpose: This program compares two given values (refTemp and measuredTemp) 
+// and based on if the measuredTemp is lower or higher it turns on PORTD1 or 
+// PORTD2 respectively.  
+// Dependencies: AssemblyConfig.inc pic18f46k42.inc xc.inc
+// Compiler: MPLAB X IDE v6.30
+// Author: Yahir Magana 
+// OUTPUTS: PORTD1 or PORTD2 turned on 
+// INPUTS: measuredTemp and refTemp 
+// Versions:
+//  	V1.0: 03/07/2026 - First version 
+//  	V1.2: date - Changes something….
+//-----------------------------
 
+;----------------
+; PROGRAM INPUTS
+;----------------
+;The DEFINE directive is used to create macros or symbolic names for values.
+;It is more flexible and can be used to define complex expressions or sequences of instructions.
+;It is processed by the preprocessor before the assembly begins.
+
+#define  measuredTemp		10h ; this is the input value
+#define  refTemp 		19h ; this is the input value
+
+;---------------------
+; Definitions
+;---------------------
+#define SWITCH    LATD,2  
+#define LED0      PORTD,0
+#define LED1	  PORTD,1
+    
+ 
+;---------------------
+; Program Constants
+;---------------------
+; The EQU (Equals) directive is used to assign a constant value to a symbolic name or label.
+; It is simpler and is typically used for straightforward assignments.
+;It directly substitutes the defined value into the code during the assembly process.
+    
+REG10   equ     10h   // in HEX
+REG11   equ     11h
+REG01   equ     1h
+REG20	EQU	0x20
+REG21	EQU	0x21
+contReg	EQU	0x22
+   
+#include <pic18f46k42.inc>
+#include <xc.inc>
+
+ORG	0x20
+
+MAIN: 
+    MOVLW   refTemp
+    MOVWF   REG20
+    MOVLW   measuredTemp
+    MOVWF   REG21
+    
+    CLRF    STATUS
+    MOVLW   0x00
+    ADDLW   measuredTemp
+    BN	    LED_HEATER
+    
+    MOVLW   refTemp
+    CPFSEQ  REG21
+    GOTO    COMPARATOR
+    CALL    LED_OFF
+    GOTO    MAIN
+    
+COMPARATOR:
+    CPFSGT  REG21
+    GOTO    LED_HEATER
+    GOTO    LED_COOLER
+    
+ORG	0x80
+LED_OFF:
+    BCF	    LATD, 0
+    BCF	    LATD, 1
+    CLRF    contReg
+    RETURN
+    
+LED_COOLER:
+    BSF	    LATD, 1
+    BCF	    LATD, 0
+    MOVLW   0x2
+    MOVWF   contReg
+    GOTO    MAIN
+    
+LED_HEATER:
+    BSF	    LATD, 0
+    BCF	    LATD, 1
+    MOVLW   0x1
+    MOVWF   contReg
+    GOTO    MAIN
+    
