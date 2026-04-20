@@ -1,3 +1,52 @@
+//-----------------------------
+// Title: Photoresistor‑Based Combination Lock System (Security Box)
+//-----------------------------
+// Purpose:
+//      This program implements a 2‑stage security lock using two
+//      photoresistors (PR1 and PR2) as input sensors. Each sensor
+//      increments a counter (0–3) when triggered, and the user
+//      switches from PR1 and PR2 using a Select button.
+//
+//      When both counters match the predefined secret combination
+//      (SECRET_PR1, SECRET_PR2), the relay activates for 2 seconds,
+//      unlocking the system. An emergency condition triggers a
+//      dedicated alert melody and overrides normal operation.
+//
+// Features:
+//      • 7‑segment display output using SEGMENT_MAP
+//      • Debounced LDR (photoresistor) transitions
+//      • Select button for digit switching
+//      • Emergency override with audible alert
+//      • Relay‑controlled unlocking mechanism
+//      • Error detection and automatic reset
+//
+// Dependencies:
+//      ConfigFile.h
+//      initSystem.h
+//      helperFunctions.h
+//
+// Compiler / Environment:
+//      MPLAB X IDE, XC8 v6.30 Compiler
+//      Target MCU: PIC18F47K42 Curiosity Nano
+//
+// I/O Summary:
+//      INPUTS:
+//          – PR1_PIN : Photoresistor 1 digital threshold input
+//          – PR2_PIN : Photoresistor 2 digital threshold input
+//          – SELECT_BTN : Digit‑change button
+//          – emergency_triggered : Global emergency flag
+//
+//      OUTPUTS:
+//          – DISPLAY_PORT : 7‑segment display output
+//          – STATE_LED : System status LED
+//          – RELAY_PIN : Drive relay
+//
+// Author: Yahir Magana
+//
+// Versions:
+//      V1.0: 04/19/2026 – Fully functional lock system with emergency mode
+//-----------------------------
+
 #include <xc.h>
 #include <stdint.h>
 #include "ConfigFile.h"
