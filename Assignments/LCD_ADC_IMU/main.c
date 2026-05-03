@@ -1,19 +1,48 @@
-/*******************************************************************************
- * File:   main.c
- * Author: Yahir Magana
- * Date:   May 2026
- *
- * Description: 
- * This program interfaces a PIC18F47K42 microcontroller with an analog 
- * accelerometer, a 16x2 LCD, and a digital input button/sensor. 
- * * Features:
- * 1. Reads analog voltage from an IMU on pin RA1.
- * 2. Converts voltage to acceleration (m/s^2) assuming a 3.3V, 300mV/g sensor.
- * 3. Displays the current tilt state (Flat, Tilt Left, Tilt Right, Shake) 
- * and acceleration on the LCD.
- * 4. Uses an Interrupt-On-Change (IOC) on pin RC1 to detect a digital signal,
- * which triggers an LED blink sequence on pin RE0.
- ******************************************************************************/
+//-----------------------------
+// Title: Accelerometer-Based Tilt and Shake Detection System
+//-----------------------------
+// Purpose:
+//      This program interfaces a PIC18F47K42 microcontroller with an
+//      analog accelerometer (IMU) and a 16x2 LCD. It reads the analog
+//      voltage, calculates the physical acceleration in m/s^2, and
+//      determines the sensor's physical state (Flat, Tilt Left, 
+//      Tilt Right, or Shaking). It also features an Interrupt-On-Change
+//      (IOC) digital input that triggers a visual LED alert sequence.
+//
+// Features:
+//      • Analog-to-digital conversion using the internal ADCRC
+//      • Math conversion from raw IMU voltage to acceleration (m/s^2)
+//      • Differential delta-tracking for physical shake detection
+//      • State-trapping loops for continuous LCD tilt state updates
+//      • 16x2 character LCD interface (8-bit data bus)
+//      • Interrupt-On-Change (IOC) with LED response
+//
+// Dependencies:
+//      <xc.h>
+//      <stdint.h>
+//      <stdio.h>
+//      <stdlib.h>
+//
+// Compiler / Environment:
+//      MPLAB X IDE, XC8 Compiler
+//      Target MCU: PIC18F47K42
+//
+// I/O Summary:
+//      INPUTS:
+//          – RA1 : Analog input from accelerometer (IMU)
+//          – RC1 : Digital input for Interrupt-On-Change trigger
+//
+//      OUTPUTS:
+//          – PORTB (RB0-RB7) : 8-bit Data Bus for LCD
+//          – RD0 : LCD Register Select (RS) pin
+//          – RD1 : LCD Enable (EN) pin
+//          – RE0 : System indicator LED (triggered by interrupt)
+//
+// Author: Yahir Magana
+//
+// Versions:
+//      V1.0: 05/02/2026 – Fully functional tilt and shake system with IOC
+//-----------------------------
 
 #include <xc.h>
 #include <stdint.h>
